@@ -20,6 +20,7 @@ import ReactMarkdown from "react-markdown";
 import {
   Metadata,
   IndexingStatus,
+  IndexRevision,
   getRepositoryManager,
 } from "services/RepositoryManager";
 
@@ -39,6 +40,7 @@ interface CodeSnippet {
 interface HomeProps {
   metadata: Metadata;
   indexing: IndexingStatus;
+  indexRevision?: IndexRevision;
 }
 
 const HomeContainer = (props: { children: ReactNode }) => (
@@ -51,7 +53,7 @@ const HomeContainer = (props: { children: ReactNode }) => (
   </main>
 );
 
-export default function Home({ metadata, indexing }: HomeProps) {
+export default function Home({ metadata, indexing, indexRevision }: HomeProps) {
   const [searchQuery, setSearchQuery] = useState<string>(
     metadata.exampleQueries[0]
   );
@@ -120,6 +122,8 @@ export default function Home({ metadata, indexing }: HomeProps) {
       </InfoContainer>
     );
   }
+
+  const ref = indexRevision?.revision || "main";
 
   return (
     <HomeContainer>
@@ -255,7 +259,7 @@ export default function Home({ metadata, indexing }: HomeProps) {
                   label="View on Github"
                   color="default"
                   component="a"
-                  href={`https://github.com/${metadata.name}/tree/main/${match.metadata.source}#L${match.metadata.lineNumber}`}
+                  href={`https://github.com/${metadata.name}/tree/${ref}/${match.metadata.source}#L${match.metadata.lineNumber}`}
                   size="small"
                   sx={{ fontSize: "0.85rem", ml: 1, p: 1 }}
                   variant="outlined"
@@ -299,6 +303,7 @@ export async function getServerSideProps(context: any) {
     props: {
       metadata: repository.metadata,
       indexing: repository.getIndexingStatus(),
+      indexRevision: repository.getIndexRevision(),
     },
   };
 }

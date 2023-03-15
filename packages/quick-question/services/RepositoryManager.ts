@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-import { buildIndex } from "quick-question-indexer";
+import { buildIndex, revisionFilename, Revision } from "quick-question-indexer";
 
 export interface Metadata {
   name: string;
@@ -9,11 +9,13 @@ export interface Metadata {
 }
 
 export type IndexingStatus = "init" | "success" | "pending" | "failed";
+export type IndexRevision = Revision;
 
 class RepositoryManager {
   indexingJob?: Promise<void>;
   indexingStatus: IndexingStatus = "init";
   metadata: Metadata;
+  private indexRevision: IndexRevision | null = null;
 
   constructor() {
     const metadataFile = path.join(
@@ -41,6 +43,27 @@ class RepositoryManager {
     }
 
     return this.indexingStatus;
+  }
+
+  getIndexRevision(): IndexRevision | null {
+    if (this.getIndexingStatus() !== 'success') {
+      return null;
+    }
+    if (this.indexRevision) {
+      return this.indexRevision;
+    }
+    const indexRevisionFile = path.join(
+      process.cwd(),
+      process.env.REPO_DIR!,
+      "index",
+      revisionFilename
+    );
+    if (fs.existsSync(indexRevisionFile)) {
+      this.indexRevision = JSON.parse(
+        fs.readFileSync(indexRevisionFile, "utf-8")
+      ) as Revision;
+    }
+    return this.indexRevision;
   }
 }
 

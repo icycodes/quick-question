@@ -4,6 +4,8 @@ import path from "path";
 import TreeSitter, { SyntaxNode } from "tree-sitter";
 import TreeSitterPython from "tree-sitter-python";
 import TreeSitterTypescript from "tree-sitter-typescript";
+import TreeSitterJava from "tree-sitter-java";
+import TreeSitterKotlin from "tree-sitter-kotlin";
 import { TextBuffer, Location } from "superstring";
 
 export interface Chunk {
@@ -61,6 +63,22 @@ const LanguageInfos: Array<LanguageInfo> = [
     language: TreeSitterTypescript.tsx,
     languageName: "tsx",
     extensions: [".tsx"],
+    nodeTypes: ["function_declaration", "class_declaration"],
+    maxLevel: 1,
+    minLoc: 4,
+  },
+  {
+    language: TreeSitterJava,
+    languageName: "java",
+    extensions: [".java"],
+    nodeTypes: ["function_declaration", "class_declaration"],
+    maxLevel: 1,
+    minLoc: 4,
+  },
+  {
+    language: TreeSitterKotlin,
+    languageName: "kotlin",
+    extensions: [".kt"],
     nodeTypes: ["function_declaration", "class_declaration"],
     maxLevel: 1,
     minLoc: 4,

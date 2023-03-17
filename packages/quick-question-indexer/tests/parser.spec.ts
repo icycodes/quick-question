@@ -28,3 +28,20 @@ describe("parseFile: tsx", function () {
     assert.match(chunks[1].code, /class ContainerComponent.*/);
   });
 });
+
+describe("parseFile: java", function () {
+  it("should success", async function () {
+    const chunks = await parseFile("./tests/data/java.java");
+    assert.equal(chunks.length, 1);
+    assert.match(chunks[0].code, /public class Greeter.*/);
+  });
+});
+
+describe("parseFile: kotlin", function () {
+  it("should success", async function () {
+    const chunks = await parseFile("./tests/data/kotlin.kt");
+    assert.equal(chunks.length, 2);
+    assert.match(chunks[0].code, /fun printWithSpace.*/);
+    assert.match(chunks[1].code, /class Greeter.*/);
+  });
+});
